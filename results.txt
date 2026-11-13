@@ -1,0 +1,40 @@
+data: {'binance.json': '636723d3', 'coinbase.json': '5810fe1b', 'usdc.json': 'a9f7d644', 'usdt.json': '2cf903ed'}
+test weeks 2024-01-01 to 2026-10-26
+
+=== H1 (primary): next-week return, z above 1.708 vs rest ===
+test: n=148 top weeks=20
+  mean next-week log return top -1.68%, rest +0.63%
+  diff -2.31%, 95% block bootstrap [-4.43%, +0.50%], one-sided p=0.939 (dropped resamples 0), Welch one-sided p=0.945
+  H1 NOT SUPPORTED
+  test top weeks: ['2024-01-01', '2024-01-08', '2024-01-22', '2024-02-26', '2024-03-04', '2024-03-11', '2024-03-18', '2024-04-01', '2024-04-15', '2024-11-04', '2024-11-11', '2024-11-18', '2024-12-02', '2024-12-09', '2025-01-13', '2025-01-20', '2025-02-03', '2025-04-21', '2025-08-11', '2025-08-25']
+training (threshold set here, not a test): top=16 diff +4.41% [-0.55%, +10.00%] p=0.043
+
+=== H2 (secondary): r_next ~ z + r + r_lag1, test, Newey-West 4 lags ===
+==============================================================================
+                 coef    std err          z      P>|z|      [0.025      0.975]
+------------------------------------------------------------------------------
+const          0.0031      0.006      0.518      0.605      -0.009       0.015
+z              0.0020      0.005      0.421      0.674      -0.007       0.011
+r             -0.0404      0.088     -0.459      0.647      -0.213       0.132
+r_lag1        -0.0164      0.085     -0.192      0.848      -0.183       0.151
+==============================================================================
+  b(z) = +0.00202 per unit z, one-sided p=0.337, n=148
+  H2 NOT SUPPORTED
+
+=== Description: does issuance follow price? z ~ r(t-1..t-3), Newey-West 4 lags ===
+  training: r_lag1 +2.32 (p 0.042), r_lag2 +0.69 (p 0.430), r_lag3 +1.72 (p 0.048), R2 0.041, n=153
+  test: r_lag1 +5.92 (p 0.006), r_lag2 +1.40 (p 0.367), r_lag3 +4.12 (p 0.018), R2 0.109, n=145
+  (z units per 1.0 log return, so +1.0 means a 10% week adds 0.1 to z)
+
+=== Robustness (reported, never changes a verdict) ===
+no one-day gap                     n=148 top= 20  diff +0.07% [-2.12%, +2.78%]  p=0.444
+3-day median supply                n=148 top= 20  diff -1.00% [-2.88%, +2.07%]  p=0.652
+USDT only                          n=148 top= 23  diff -1.51% [-3.70%, +1.29%]  p=0.810
+USDC only                          n=148 top= 22  diff +0.55% [-1.72%, +3.80%]  p=0.278
+top 20%                            n=148 top= 33  diff -1.27% [-3.15%, +1.18%]  p=0.824
+raw dollar threshold $2.276bn      n=148 top= 24  diff -2.09% [-4.43%, +0.68%]  p=0.929
+Coinbase BTC-USD returns           n=148 top= 20  diff -2.35% [-4.46%, +0.48%]  p=0.940
+
+=== Chart data: mean r_next by training-z decile ===
+  training: d1 n=16 -1.06% | d2 n=16 -0.95% | d3 n=15 +0.65% | d4 n=15 +1.37% | d5 n=16 +0.51% | d6 n=16 +0.29% | d7 n=15 -0.13% | d8 n=16 +0.68% | d9 n=15 -3.86% | d10 n=16 +4.14%
+  test: d1 n=20 -1.73% | d2 n=9 -1.33% | d3 n=13 +1.76% | d4 n=10 -0.72% | d5 n=11 +1.07% | d6 n=11 +0.56% | d7 n=28 +1.17% | d8 n=13 +3.82% | d9 n=13 +0.88% | d10 n=20 -1.68%

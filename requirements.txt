@@ -4,3 +4,4 @@ requests
 statsmodels
 matplotlib
 pytest
+scipy
