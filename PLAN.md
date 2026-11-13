@@ -99,4 +99,20 @@ All tests are one-sided at 5%.
 
 ## Amendments
 
-(none yet)
+### 2026-11-13, thresholds from the training period (before any test)
+
+Computed by `thresholds.py` on data fetched 2026-11-13 14:00 UTC (sha256 of usdt.json starts 2cf903ed, usdc.json a9f7d644, binance.json 636723d3, coinbase.json 5810fe1b). Only z values of weeks starting 2021-01-04 to 2023-12-25 were used, plus weekly dollar changes from 2020-01-06 for the dollar variant. No return was read.
+
+- H1 top week: **z above 1.708** (90th percentile of 156 training weeks).
+- Top 20% robustness: z above 0.803.
+- 3-day median supply: z above 1.660. USDT only: 1.876. USDC only: 1.368.
+- Raw dollar variant: weekly change in USDT+USDC supply above **$2.276bn**.
+- Chart decile edges (training z): -1.134, -0.955, -0.694, -0.393, -0.232, 0.020, 0.417, 0.803, 1.708.
+
+Details the plan left open, also fixed before any test:
+
+- One-sided HAC p-value = half the two-sided p-value when the coefficient has the predicted sign, else 1 minus that.
+- Bootstrap resamples with no top week, or no other week, are dropped and the count is reported.
+- The test period ends with the last week whose r_next is complete in the data fetched on the day of the run.
+- The 3-day median is trailing (days D-2 to D), so it uses no day after D.
+- In the chart, the training band is the 2.5th to 97.5th percentile of the block-bootstrapped decile mean; the test top-decile interval is the same percentile interval from the H1 bootstrap.
