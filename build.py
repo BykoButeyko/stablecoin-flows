@@ -34,7 +34,7 @@ def supply(name):
 
 def prices(name):
     """Price at 00:00 UTC of each day = close of the previous day's candle."""
-    unit = "ms" if name == "binance" else "s"
+    unit = "ms" if name.startswith("binance") else "s"
     rows = _load(f"{name}.json")
     s = pd.Series({pd.Timestamp(t, unit=unit) + pd.Timedelta(days=1): float(px) for t, px in rows})
     return s.sort_index()

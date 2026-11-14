@@ -4,6 +4,7 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 
 from analysis import DECILE_EDGES, block_bootstrap_mean
 from build import Path, frame, split
@@ -62,5 +63,43 @@ def main():
     fig.savefig(Path(__file__).with_name("chart.png"), dpi=160, bbox_inches="tight", facecolor=SURFACE)
 
 
+
+def event_chart():
+    """Second chart: bitcoin price around days with a >$1bn USDT+USDC mint, test period, with 95% band."""
+    import build
+    from explore import daily_frame, event_paths, mint_events
+    p = build.prices("binance")
+    d = daily_frame(build.combined_supply(), p)
+    ev = mint_events(d)
+    ev = ev[(ev >= build.TEST_START) & (ev + pd.Timedelta(days=11) <= p.index.max())]
+    paths = 100 * event_paths(np.log(p), ev)
+    k = np.arange(-10, 11)
+    rng = np.random.default_rng(0)
+    boots = np.array([paths[rng.integers(0, len(paths), len(paths))].mean(axis=0) for _ in range(10_000)])
+    lo, hi = np.percentile(boots, [2.5, 97.5], axis=0)
+    fig, ax = plt.subplots(figsize=(10, 5.2), facecolor=SURFACE)
+    ax.set_facecolor(SURFACE)
+    ax.fill_between(k, lo, hi, color=BAND, linewidth=0, label="95% band (events resampled)")
+    ax.plot(k, paths.mean(axis=0), color=BLUE, linewidth=2, marker="o", markersize=4, label=f"Mean of {len(ev)} mint days, 2024-26")
+    ax.axhline(0, color=INK2, linewidth=0.8)
+    ax.axvline(0, color=ORANGE, linewidth=1.2)
+    ax.text(0.2, hi.max(), "mint day", color=ORANGE, fontsize=9, va="top")
+    ax.set_xticks(range(-10, 11, 2))
+    ax.set_xlabel("Days from the mint day", color=INK2, fontsize=9.5)
+    ax.set_title("Bitcoin price around days when USDT+USDC supply rose by more than $1bn (% vs. end of mint day)",
+                 loc="left", fontsize=10.5, color=INK, pad=8)
+    ax.grid(axis="y", color=GRID, linewidth=0.6)
+    ax.set_axisbelow(True)
+    for s in ("top", "right", "left"):
+        ax.spines[s].set_visible(False)
+    ax.spines["bottom"].set_color(GRID)
+    ax.tick_params(colors=INK2, labelsize=9, length=0)
+    ax.legend(frameon=False, fontsize=8.5, loc="lower right", labelcolor=INK2)
+    fig.text(0.125, -0.03, "A mint day within 7 days after an earlier one is skipped. Sources: DefiLlama, Binance BTCUSDT.",
+             fontsize=8, color=INK2)
+    fig.savefig(Path(__file__).with_name("chart_event.png"), dpi=160, bbox_inches="tight", facecolor=SURFACE)
+
+
 if __name__ == "__main__":
     main()
+    event_chart()

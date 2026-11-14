@@ -141,3 +141,8 @@ The list:
 - **E11. Stability.** The H1 difference for each calendar year 2024, 2025 and 2026 separately. Description only, no p-value in the Holm family.
 
 Rules: one-sided p from bootstraps is the share of resampled statistics on the wrong side of zero; from HAC regressions it follows the rule in the earlier amendment. Holm is applied to E1 to E10 (E2 counts as two), eleven p-values in all.
+
+### 2026-11-14, after the exploratory run
+
+- `fetch.py` now also downloads the three exploratory sources, and I refetched everything on 2026-11-14 12:32 UTC (sha256 of usdt.json starts 3064c167, usdc.json 9f420e5d, binance.json 91197706). DefiLlama had revised its latest days. The training thresholds came out identical to the third decimal, and the H1 and H2 output was unchanged, so results.txt stays as first run.
+- E6 (daily issuance) came out at p = 0.007, Holm p = 0.08. Since it was the only result near the line, I ran extra checks that I had not listed in advance: return controls, other gaps, each year, the training years, winsorising. They are in `posthoc_e6.py` and labelled post-hoc in results_explore.txt and the README.

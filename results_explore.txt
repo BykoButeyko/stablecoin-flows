@@ -1,0 +1,36 @@
+data: {'all_stables.json': 'dc382638', 'binance.json': '91197706', 'binance_eth.json': '0d844322', 'coinbase.json': 'd7cc9cb2', 'coinmetrics.json': 'cd0308b2', 'usdc.json': '9f420e5d', 'usdt.json': '3064c167'}
+test weeks 2024-01-01 to 2026-10-26 (n=148)
+
+E1 weekly growth corr DefiLlama vs CoinMetrics (test) 0.807; top-week agreement 95%
+E6b daily zd ~ 7 lagged returns (description): 1:+7.6, 2:+8.0, 3:+0.8, 4:+3.9, 5:+5.1, 6:+0.2, 7:+7.7  joint Wald p=0.0001, R2 0.040
+E8 path test (24 events): -10:-2.9 -8:-3.2 -6:-2.6 -4:-2.3 -2:-1.6 +0:+0.0 +2:-0.1 +4:+0.0 +6:-0.0 +8:-0.3 +10:-0.0
+E8 path 2021-23 (21 events): -10:-1.4 -8:-1.7 -6:-2.8 -4:-2.4 -2:-1.5 +0:+0.0 +2:-2.1 +4:-2.7 +6:-2.7 +8:-2.5 +10:-4.7
+
+=== Exploratory family, Holm-adjusted across 11 ===
+E1 CoinMetrics supply                -0.68%  p=0.517  Holm p=1.000  top=16 thr z>1.811 [-4.80%, +4.84%]
+E2a next 2 weeks                     -1.86%  p=0.794  Holm p=1.000  n=147 [-4.71%, +2.15%]
+E2b next 4 weeks                     -1.12%  p=0.650  Holm p=1.000  n=145 [-7.10%, +5.36%]
+E3 slope r_next ~ z                +0.110pp  p=0.397  Holm p=1.000  per unit z, se 0.42pp, R2 0.001
+E4 full sample 2021-26               +0.75%  p=0.369  Holm p=1.000  n=304 top=36 [-2.20%, +4.03%]
+E5 bottom decile (pred. < 0)         -2.37%  p=0.054  Holm p=0.539  z<-1.134 n_bottom=20 [-5.42%, +0.51%]
+E6 daily r ~ zd                    +0.103pp  p=0.007  Holm p=0.080  n=1047 se 0.042pp
+E7 all stablecoins                   -1.38%  p=0.791  Holm p=1.000  top=22 thr z>1.451 [-3.33%, +1.27%]
+E8 >$1bn mint days, 7d after         -0.25%  p=0.599  Holm p=1.000  events=24 (test), [-2.86%, +2.68%]
+E9 up-trend minus down-trend         -1.19%  p=0.743  Holm p=1.000  up: -2.67% (top 17), down: -1.49% (top 3); two-sided
+E10 ETH next week                    -1.66%  p=0.886  Holm p=1.000  top=20 [-4.98%, +1.38%]
+
+=== E11 H1 difference by calendar year (description) ===
+  2024: weeks 53, top 14, top -1.99%, rest +2.51%, diff -4.50%
+  2025: weeks 52, top 6, top -0.96%, rest +0.05%, diff -1.01%
+  2026: weeks 43, top 0, top +nan%, rest -0.45%, diff +nan%
+=== Post-hoc checks of E6 (decided after seeing E6, not pre-registered) ===
+  as E6                                        b=+0.103pp se 0.042  one-sided p=0.007  n=1047
+  control same-day and 7 lagged returns        b=+0.103pp se 0.044  one-sided p=0.009  n=1047
+  two-day gap                                  b=+0.013pp se 0.048  one-sided p=0.397  n=1046
+  no gap                                       b=+0.007pp se 0.039  one-sided p=0.427  n=1048
+  training years 2021-23                       b=-0.050pp se 0.068  one-sided p=0.770  n=1092
+  test, 2024 only                              b=+0.137pp se 0.059  one-sided p=0.010  n=366
+  test, 2025 only                              b=+0.002pp se 0.069  one-sided p=0.490  n=365
+  test, 2026 only                              b=+0.069pp se 0.104  one-sided p=0.254  n=316
+  zd winsorised at +-5                         b=+0.129pp se 0.053  one-sided p=0.008  n=1047
+  daily return autocorrelation lag 1 (test): -0.049

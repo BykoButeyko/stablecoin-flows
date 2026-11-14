@@ -38,3 +38,12 @@ def test_bootstrap_sign():
     y = rng.normal(0, 1, 100) + 3 * top
     diff, p, lo, hi, dropped = block_bootstrap_diff(top, y, n=2000)
     assert diff > 2 and p < 0.01 and lo < diff < hi
+
+
+def test_mint_events_declustered():
+    from explore import mint_events
+    idx = pd.date_range("2024-01-01", periods=30, freq="D")
+    usd = pd.Series(0.0, index=idx)
+    usd.iloc[[0, 3, 7, 8, 20]] = 2e9   # day 8 is 8 days after day 0, so it is kept
+    ev = mint_events(pd.DataFrame({"usd": usd}))
+    assert list(ev.day) == [1, 9, 21]

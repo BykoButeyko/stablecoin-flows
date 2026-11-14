@@ -42,10 +42,29 @@ def defillama():
         save(f"{name}.json", rows)
 
 
-def binance():
+def defillama_all():
+    """Total supply of all stablecoins tracked by DefiLlama (exploratory E7)."""
+    d = get("https://stablecoins.llama.fi/stablecoincharts/all").json()
+    save("all_stables.json", [{"date": int(r["date"]), "circulating": r["totalCirculatingUSD"].get("peggedUSD")}
+                              for r in d])
+
+
+def coinmetrics():
+    """USDT and USDC SplyCur from the CoinMetrics community API (exploratory E1)."""
+    out, url = [], "https://community-api.coinmetrics.io/v4/timeseries/asset-metrics"
+    params = dict(assets="usdt,usdc", metrics="SplyCur", frequency="1d",
+                  start_time=START.strftime("%Y-%m-%d"), page_size=10000)
+    while url:
+        x = get(url, **params).json()
+        out += [[r["asset"], r["time"][:10], r["SplyCur"]] for r in x["data"]]
+        url, params = x.get("next_page_url"), {}
+    save("coinmetrics.json", out)
+
+
+def binance(symbol="BTCUSDT", name="binance"):
     out, t = [], int(START.timestamp() * 1000)
     while True:
-        x = get("https://api.binance.com/api/v3/klines", symbol="BTCUSDT",
+        x = get("https://api.binance.com/api/v3/klines", symbol=symbol,
                 interval="1d", startTime=t, limit=1000).json()
         if not x:
             break
@@ -53,7 +72,7 @@ def binance():
         t = x[-1][0] + 86_400_000
         if len(x) < 1000:
             break
-    save("binance.json", out)
+    save(f"{name}.json", out)
 
 
 def coinbase():
@@ -77,7 +96,10 @@ def hashes():
 if __name__ == "__main__":
     defillama()
     binance()
+    binance("ETHUSDT", "binance_eth")
     coinbase()
+    coinmetrics()
+    defillama_all()
     print(f"fetched {datetime.now(timezone.utc):%Y-%m-%d %H:%M} UTC")
     for k, v in hashes().items():
         print(k, v)
