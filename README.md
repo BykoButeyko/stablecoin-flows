@@ -4,6 +4,8 @@ A popular story in crypto goes like this: when Tether and Circle mint a lot of n
 
 I tested it. I wrote the hypotheses, data rules and pass lines in [PLAN.md](PLAN.md) and committed them on 13 November 2026 before running any test. I fixed the threshold on 2021-2023 data and committed it separately, also before the test. 2024 to October 2026 is the test period.
 
+The write-up is on my site: [Does a big week of stablecoin issuance predict bitcoin's next week?](https://bykobuteyko.com/research/stablecoin-issuance/)
+
 ![Next-week bitcoin return by decile of stablecoin issuance](chart.png)
 
 ## Results (test period, 148 weeks, January 2024 to October 2026)
