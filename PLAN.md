@@ -116,3 +116,28 @@ Details the plan left open, also fixed before any test:
 - The test period ends with the last week whose r_next is complete in the data fetched on the day of the run.
 - The 3-day median is trailing (days D-2 to D), so it uses no day after D.
 - In the chart, the training band is the 2.5th to 97.5th percentile of the block-bootstrapped decile mean; the test top-decile interval is the same percentile interval from the H1 bootstrap.
+
+### 2026-11-14, exploratory analyses (listed before running any of them)
+
+H1 and H2 have their verdicts, and nothing below changes them. These are extra questions I want answered for the write-up. Because I am asking eleven of them, any one could come out "significant" by chance, so I report each p-value next to a Holm-adjusted p-value across the eleven, and I call a result notable only if the adjusted p is below 0.05. All are on the test period (weeks starting 2024-01-01) unless stated. Bootstraps are the same moving-block kind as H1 (4-week blocks for weekly data, 7-day blocks for daily data, 10,000 resamples, seed 0).
+
+New data, all free and without a key, fetched by `fetch.py`:
+- CoinMetrics community API, `SplyCur` for USDT and USDC, daily. This is a second source and a different definition: it counts all tokens outstanding, Tether's treasury stock included.
+- DefiLlama total stablecoin supply, all coins (`stablecoincharts/all`).
+- Binance ETHUSDT daily closes.
+
+The list:
+
+- **E1. Second data source.** H1 with CoinMetrics supply in place of DefiLlama. Same z, threshold recomputed on 2021-23 the same way. Predicted sign: positive. One-sided.
+- **E2. Longer horizons.** H1 with the return over the next two weeks (E2a) and next four weeks (E2b), each starting on the same Tuesday as r_next. One-sided, positive.
+- **E3. Continuous slope.** OLS of r_next on z alone, Newey-West 4 lags. One-sided, positive.
+- **E4. Full sample.** H1 on all weeks from 2021-01-04 to the end. More weeks, but the training years are in it, so this is not out of sample. One-sided, positive.
+- **E5. Redemption weeks.** z below the training 10th percentile, against all other weeks. If minting is bullish, heavy redemption should be bearish. One-sided, negative.
+- **E6. Daily frequency.** Daily issuance g_d(D) = log S(D+1) minus log S(D), scored against the previous 365 days the same way as z. Outcome: log P(D+3) minus log P(D+2), keeping the one-day gap. OLS slope, Newey-West 7 lags. One-sided, positive. Also reported, outside the Holm family: the same regression with issuance on the previous seven daily returns, to see whether daily issuance follows price.
+- **E7. All stablecoins.** H1 with total stablecoin supply from DefiLlama. One-sided, positive.
+- **E8. Event study.** Days when combined USDT+USDC supply rose by more than $1bn. A day within 7 days after an earlier event is dropped, so each event is the first in its cluster. Statistic: mean log return from P(D+2) to P(D+9) after events, minus the same over all days. One-sided, positive. The chart shows the mean cumulative return from 10 days before to 10 days after the event, which shows whether mints come after rallies.
+- **E9. Trend regime.** Split test weeks by whether bitcoin's return over the four weeks ending at the end of week t was positive. Statistic: the H1 difference in up-trend weeks minus the H1 difference in down-trend weeks, using the main threshold. Two-sided, since I have no prediction for its sign.
+- **E10. Ether.** H1 with next-week ETHUSDT return in place of bitcoin. One-sided, positive.
+- **E11. Stability.** The H1 difference for each calendar year 2024, 2025 and 2026 separately. Description only, no p-value in the Holm family.
+
+Rules: one-sided p from bootstraps is the share of resampled statistics on the wrong side of zero; from HAC regressions it follows the rule in the earlier amendment. Holm is applied to E1 to E10 (E2 counts as two), eleven p-values in all.
